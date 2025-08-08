@@ -1,0 +1,33 @@
+
+
+{% schema %}
+{
+  "name": "Star Rating Test 4",
+  "target": "body",
+  "settings": [
+    { "type": "product", "id": "product", "label": "product", "autofill": true },
+    { "type": "color", "id": "colour", "label": "Star Colour", "default": "#ff0000" }
+  ]
+}
+{% endschema %}
+
+
+<script>
+console.log("j");
+  document.addEventListener('DOMContentLoaded', function () {
+    const audio = new Audio('https://www.soundjay.com/buttons/button-17.mp3');
+console.log("1");
+    document.body.addEventListener('click', function (e) {
+      console.log("2");
+      const target = e.target;
+
+      // Try to detect add-to-cart button
+      if (target.matches('form[action*="/cart/add"] [type="submit"], button[name="add"], .add-to-cart')) {
+        // play the song
+        audio.play().catch(err => {
+          console.warn("Audio play was interrupted:", err);
+        });
+      }
+    });
+  });
+</script>
