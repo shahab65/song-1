@@ -7,15 +7,62 @@ import {
   Page,
   Text,
   BlockStack,
+  Button,
+  Image,
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
+import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { useLoaderData } from "@remix-run/react"; import { authenticate } from "../shopify.server";
+import ProductList from "./components/ProductList";
+export const loader = async ({ request }) => {
+  const { admin } = await authenticate.admin(request);
+
+  const response = await admin.graphql(`
+    #graphql
+    query {
+      products(first: 10, sortKey: CREATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            status
+            handle
+            onlineStoreUrl
+            featuredImage {
+              url
+            }
+          }
+        }
+      }
+      shop {
+        name
+      }
+    }
+  `);
+
+  const { data } = await response.json();
+
+  const products = data.products.edges.map(edge => edge.node);
+
+  return {
+    shopName: data.shop.name,
+    products,
+  };
+};
+
 
 export default function AdditionalPage() {
+  const { shopName, products } = useLoaderData();
+  const app = useAppBridge();
+  console.log(shopName);
+  console.log(app.config.shop)
+  console.log(app);
+  console.log(products);
   return (
     <Page>
       <TitleBar title="Additional page" />
       <Layout>
         <Layout.Section>
+          <Button onClick={() => app.toast.show("Hello")}>show toeast</Button>
           <Card>
             <BlockStack gap="300">
               <Text as="p" variant="bodyMd">
@@ -60,6 +107,8 @@ export default function AdditionalPage() {
             </BlockStack>
           </Card>
         </Layout.Section>
+
+        <ProductList products={products} />
       </Layout>
     </Page>
   );
