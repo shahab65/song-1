@@ -34,7 +34,9 @@ export const loader = async ({ request }) => {
         }
       }
       shop {
+        id
         name
+        
       }
     }
   `);
@@ -44,25 +46,31 @@ export const loader = async ({ request }) => {
   const products = data.products.edges.map(edge => edge.node);
 
   return {
-    shopName: data.shop.name,
+    shop: data.shop,
     products,
   };
 };
 
 
 export default function AdditionalPage() {
-  const { shopName, products } = useLoaderData();
+  const { shop, products } = useLoaderData();
   const app = useAppBridge();
-  console.log(shopName);
+  console.log("shops", shop);
   console.log(app.config.shop)
   console.log(app);
   console.log(products);
+
+  const onWriteSomethingOnStore = () => {
+    alert('h')
+  }
+
   return (
     <Page>
       <TitleBar title="Additional page" />
       <Layout>
         <Layout.Section>
           <Button onClick={() => app.toast.show("Hello")}>show toeast</Button>
+          <Button onClick={onWriteSomethingOnStore}>write something on store</Button>
           <Card>
             <BlockStack gap="300">
               <Text as="p" variant="bodyMd">
