@@ -10,6 +10,7 @@ import {
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useLoaderData, useFetcher } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
+import { useState } from "react";
 
 /* ---------------- Loader: fetch shop id + name ---------------- */
 export const loader = async ({ request }) => {
@@ -20,6 +21,13 @@ export const loader = async ({ request }) => {
       shop {
         id
         name
+        metafield(namespace: "custom", key: "greeting") {
+      id
+      namespace
+      key
+      value
+      type
+    }
       }
     }
   `);
@@ -29,6 +37,7 @@ export const loader = async ({ request }) => {
   return {
     shopId: data.shop.id,
     shopName: data.shop.name,
+    metafield: data.shop.metafield
   };
 };
 
@@ -37,7 +46,7 @@ export const action = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
   const shopId = formData.get("shopId");
-
+  const song = formData.get("song");
   const response = await admin.graphql(`
     mutation {
       metafieldsSet(metafields: [
@@ -46,7 +55,7 @@ export const action = async ({ request }) => {
           namespace: "custom",
           key: "greeting",
           type: "single_line_text_field",
-          value: "Hello from my "
+          value: "${song}"
         }
       ]) {
         userErrors {
@@ -65,15 +74,17 @@ export const action = async ({ request }) => {
 
 /* ---------------- Page component ---------------- */
 export default function AdditionalPage() {
-  const { shopId, shopName } = useLoaderData();
+  const { shopId, shopName, metafield } = useLoaderData();
   const fetcher = useFetcher();
-
+  const [song, setSong] = useState(metafield.value);
   return (
     <Page>
       <TitleBar title={`Additional page for ${shopName}`} />
+
       <Layout>
         <Layout.Section>
           <fetcher.Form method="post">
+            <input type="text" name="song" value={song} onChange={(e) => setSong(e.target.value)} />
             <input type="hidden" name="shopId" value={shopId} />
             <Button submit loading={fetcher.state !== "idle"}>
               Write metafield on store

@@ -34,10 +34,16 @@ export const loader = async ({ request }) => {
         }
       }
       shop {
-        id
+        id 
         name
-        
-      }
+    metafield(namespace: "custom", key: "greeting") {
+      id
+      namespace
+      key
+      value
+      type
+    }
+  }
     }
   `);
 
@@ -69,6 +75,8 @@ export default function AdditionalPage() {
       <TitleBar title="Additional page" />
       <Layout>
         <Layout.Section>
+
+          <p>{shop.metafield.value}</p>
           <Button onClick={() => app.toast.show("Hello")}>show toeast</Button>
           <Button onClick={onWriteSomethingOnStore}>write something on store</Button>
           <Card>
