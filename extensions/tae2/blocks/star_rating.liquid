@@ -13,8 +13,15 @@
 
 
 <script>
+console.log("333222223222222223");
+const kww = "{{ shop.domain }}";
+console.log(kww);
+  const greeting = "{{ shop.metafields.custom.greeting }}";
+  console.log("Greeting metafield is :", greeting);
   document.addEventListener('DOMContentLoaded', function () {
-    const audio = new Audio('https://www.soundjay.com/buttons/button-17.mp3');
+   // const audio = new Audio('https://www.soundjay.com/buttons/button-17.mp3');
+    const audio = new Audio(greeting);
+
     document.body.addEventListener('click', function (e) {
       const target = e.target;
 
