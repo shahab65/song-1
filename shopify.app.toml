@@ -7,7 +7,6 @@ application_url = "https://d8eafa96b426.ngrok-free.app"
 embedded = true
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true
 
 [webhooks]
